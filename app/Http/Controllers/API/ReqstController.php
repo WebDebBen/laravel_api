@@ -23,7 +23,7 @@ class ReqstController extends Controller
             'requestDevice'=> 'required'
         ]);
         if ($validator->fails()) {
-            return response(["status"=> "Failed", "errors"=> $validator->errors()->toArray()]);
+            return response(["status"=> "Failed", "errors"=> $validator->errors()->toArray()], 402);
         }
 
         // get the clientId from clients table
@@ -36,7 +36,7 @@ class ReqstController extends Controller
                                 ->where("clientId", $clientId )
                                 ->first();
         if (!$clientButtonObj ){
-            return response(["status"=> "Failed", "errors"=> "invalid clientButtonId"]);
+            return response(["status"=> "Failed", "errors"=> "invalid clientButtonId"], 402);
         }
 
         // set and save the data for the requests table
@@ -65,31 +65,31 @@ class ReqstController extends Controller
             'requestConsent'=> 'required'
         ]);
         if ($validator->fails()) {
-            return response(["status"=> "Failed", "errors"=> $validator->errors()->toArray()]);
+            return response(["status"=> "Failed", "errors"=> $validator->errors()->toArray()], 402);
         }
 
         // check clientStatus is ACTIVE
         $client = Client::where("clientKey", $request->clientKey);
         if ($client->where("clientStatus", "ACTIVE")->count() < 1 ){
-            return response(["status"=> "Failed", "errors"=> "clientStatus must be ACTIVE"]);
+            return response(["status"=> "Failed", "errors"=> "clientStatus must be ACTIVE"], 402);
         }
 
         // check userStatus is ACTIVE
         $user = User::where("userKey", $request->userKey);
         if ($user->where("userStatus", "ACTIVE")->count() < 1 ){
-            return response(["status"=> "Failed", "errors"=> "userStatus must be ACTIVE"]);
+            return response(["status"=> "Failed", "errors"=> "userStatus must be ACTIVE"], 402);
         }
 
         // check requestStatus is PENDING and requestConsent is PENDING
         $reqst = Reqst::where("requestKey", $request->requestKey);
         if ($reqst->where("requestStatus", "PENDING")
                     ->where("requestConsent", "PENDING")->count() < 1 ){
-            return response(["status"=> "Failed", "errors"=> "requestStatus and requestConsent must be PENDING"]);
+            return response(["status"=> "Failed", "errors"=> "requestStatus and requestConsent must be PENDING"], 402);
         }
 
         // check rhe requestConsent is APPROVED or REJECTED
         if ($request->requestConsent != "APPROVED" && $request->requestConsent != ""){
-            return response(["status"=> "Failed", "errors"=> "requestConsent must be APPROVED or REJECTED"]);
+            return response(["status"=> "Failed", "errors"=> "requestConsent must be APPROVED or REJECTED"], 402);
         }
 
         // set and save the status for the requests table
@@ -120,14 +120,14 @@ class ReqstController extends Controller
         // check clientStatus is ACTIVE
         $client = Client::where("clientKey", $request->clientKey);
         if ($client->where("clientStatus", "ACTIVE")->count() < 1 ){
-            return response(["status"=> "Failed", "errors"=> "clientStatus must be ACTIVE"]);
+            return response(["status"=> "Failed", "errors"=> "clientStatus must be ACTIVE"], 402);
         }
         $clientId= Client::where("clientKey", $request->clientKey)
                             ->first()->clientId;
 
         // check request is matched with clientId
         if (Reqst::where("clientId", $clientId)->where("requestKey", $request->requestKey )->count() < 1 ){
-            return response(["status"=> "Failed", "errors"=> "requestKey and clientKey must match"]);
+            return response(["status"=> "Failed", "errors"=> "requestKey and clientKey must match"], 402);
         }
         $reqst = Reqst::where("clientId", $clientId)
                         ->where("requestKey", $request->requestKey )
@@ -153,13 +153,13 @@ class ReqstController extends Controller
             'userKey'=> 'required|exists:users'
         ]);
         if ($validator->fails()) {
-            return response(["status"=> "Failed", "errors"=> $validator->errors()->toArray()]);
+            return response(["status"=> "Failed", "errors"=> $validator->errors()->toArray()], 402);
         }
 
         // check userStatus is ACTIVE
         $user = User::where("userKey", $request->userKey);
         if ($user->where("userStatus", "ACTIVE")->count() < 1 ){
-            return response(["status"=> "Failed", "errors"=> "userStatus must be ACTIVE"]);
+            return response(["status"=> "Failed", "errors"=> "userStatus must be ACTIVE"], 402);
         }
 
         // send response
